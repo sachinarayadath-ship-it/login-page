@@ -19,6 +19,6 @@ jobs:
           script: |
             cd ~/nginxproject
             git pull origin main
-            sudo cp index.html /var/www/html/index.html
+            sudo cp login.html /var/www/html/login.html
             sudo systemctl reload nginx
             echo "Deployed successfully!"
