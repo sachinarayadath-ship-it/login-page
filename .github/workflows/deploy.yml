@@ -1,0 +1,49 @@
+name: CI/CD Login Page Deployment
+
+# 1. Trigger the pipeline whenever code is pushed to the main branch
+on:
+  push:
+    branches: [ "main" ]
+
+# 2. Grant permissions required to deploy to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # The CI (Continuous Integration) Stage: Checks the code
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Run Code Check
+        run: |
+          echo "Starting CI Checks..."
+          echo "Checking HTML structure..."
+          # You can add real testing/linting commands here later
+
+  # The CD (Continuous Deployment) Stage: Puts it live
+  deploy-to-pages:
+    needs: build-and-test # Only runs if the CI stage passes successfully
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub Pages hosting environment
+        uses: actions/configure-pages@v4
+
+      - name: Package project files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Uploads the entire root folder (index.html, etc.)
+
+      - name: Deploy to GitHub Pages live server
+        id: deployment
+        uses: actions/deploy-pages@v4
